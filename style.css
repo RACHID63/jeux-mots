@@ -1,0 +1,17 @@
+.column {
+    width: 30%;
+    float: left;
+    margin: 2.5%;
+  }
+  
+  .word {
+    border: 1px solid black;
+    padding: 10px;
+    margin-bottom: 10px;
+    cursor: pointer;
+  }
+  
+  .word:hover {
+    background-color: rgb(93, 129, 177);
+  }
+  
