@@ -1,52 +1,94 @@
-// Get the Arabic and French word inputs from the user
-const arabicWords = prompt("Enter Arabic words, separated by commas").split(",");
-const frenchWords = prompt("Enter French translations, separated by commas").split(",");
+let selectedWord = null;
+let correctPairs = 0;
 
-// Check if the number of words in both arrays is equal
-if (arabicWords.length !== frenchWords.length) {
-  alert("Error: Number of Arabic words and French translations must be equal.");
-} else {
-  // Shuffle the arrays
-  for (let i = arabicWords.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [arabicWords[i], arabicWords[j]] = [arabicWords[j], arabicWords[i]];
-    [frenchWords[i], frenchWords[j]] = [frenchWords[j], frenchWords[i]];
-  }
+let arabicWords = [];
+let frenchWords = [];
 
-  // Display the words in the HTML div elements
-  for (let i = 1; i <= arabicWords.length; i++) {
-    document.getElementById(`arabic-${i}`).textContent = arabicWords[i - 1];
-    document.getElementById(`french-${i}`).textContent = frenchWords[i - 1];
-    document.getElementById(`arabic-${i}`).addEventListener("click", checkMatch);
-  }
+function generateTables() {
+	arabicWords = document.getElementById("arabic-input").value.split(",");
+	frenchWords = document.getElementById("french-input").value.split(",");
+
+	if (arabicWords.length !== frenchWords.length) {
+		alert("The number of Arabic words must be equal to the number of French words.");
+		return;
+	}
+
+	let arabicTable = document.getElementById("arabic-table");
+	let frenchTable = document.getElementById("french-table");
+
+	// Clear tables
+	arabicTable.innerHTML = "";
+	frenchTable.innerHTML = "";
+
+	for (let i = 0; i < arabicWords.length; i++) {
+		let arabicWord = arabicWords[i].trim();
+		let frenchWord = frenchWords[i].trim();
+
+		let arabicRow = document.createElement("tr");
+		let arabicCell = document.createElement("td");
+		arabicCell.innerHTML = arabicWord;
+		arabicCell.onclick = function() {
+			selectWord(arabicCell);
+		};
+		arabicRow.appendChild(arabicCell);
+		arabicTable.appendChild(arabicRow);
+
+		let frenchRow = document.createElement("tr");
+		let frenchCell = document.createElement("td");
+		frenchCell.innerHTML = frenchWord;
+		frenchCell.onclick = function() {
+			selectWord(frenchCell);
+		};
+		frenchRow.appendChild(frenchCell);
+		frenchTable.appendChild(frenchRow);
+	}
 }
 
-// Initialize game variables
-let selectedWord = null;
-let matches = 0;
+function selectWord(cell) {
+	if (selectedWord === null) {
+		selectedWord = cell;
+		cell.classList.add("selected");
+	} else {
+		if (selectedWord.innerHTML === cell.innerHTML) {
+			selectedWord.classList.add("correct");
+			cell.classList.add("correct");
+			selectedWord.onclick = null;
+			cell.onclick = null;
+			selectedWord = null;
+			correctPairs++;
+			if (correctPairs === arabicWords.length) {
+				alert("Congratulations! You matched all the words!");
+			}
+		} else {
+			selectedWord.classList.add("incorrect");
+			cell.classList.add("incorrect");
+			setTimeout(function() {
+				selectedWord.classList.remove("selected", "incorrect");
+				cell.classList.remove("selected", "incorrect");
+				selectedWord = null;
+			}, 1000);
+		}
+	}
+}
 
-// Check if the clicked Arabic word matches its corresponding French translation
-function checkMatch() {
-  const frenchWord = this.textContent;
-  if (selectedWord === null) {
-    selectedWord = this.textContent;
-  } else {
-    if (this.textContent === frenchWords[arabicWords.indexOf(selectedWord)]) {
-      this.style.display = 'none';
-      document.getElementById(`french-${arabicWords.indexOf(selectedWord)+1}`).style.display = 'none';
-      selectedWord = null;
-      matches++;
-      if (matches === arabicWords.length) {
-        alert('Congratulations! You matched all the words!');
-      }
-    } else {
-      this.parentElement.classList.add('wrong');
-      document.getElementById(`french-${arabicWords.indexOf(selectedWord)+1}`).parentElement.classList.add('wrong');
-      setTimeout(() => {
-        this.parentElement.classList.remove('wrong');
-        document.getElementById(`french-${arabicWords.indexOf(selectedWord)+1}`).parentElement.classList.remove('wrong');
-        selectedWord = null;
-      }, 3000);
-    }
-  }
+function reset() {
+	selectedWord = null;
+	correctPairs = 0;
+
+	let arabicCells = document.querySelectorAll("#arabic-table td");
+	let frenchCells = document.querySelectorAll("#french-table td");
+
+	arabicCells.forEach(function(cell) {
+		cell.classList.remove("selected", "correct", "incorrect");
+		cell.onclick = function() {
+			selectWord(cell);
+		};
+	});
+
+	frenchCells.forEach(function(cell) {
+		cell.classList.remove("selected", "correct", "incorrect");
+		cell.onclick = function() {
+			selectWord(cell);
+		};
+	});
 }
