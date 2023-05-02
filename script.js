@@ -13,12 +13,20 @@ function generateTables() {
         return;
     }
 
-    let frenchWordsCopy = frenchWords.slice(); // Create a copy of frenchWords to shuffle
+    let wordPairs = [];
 
-    // Shuffle the copy of frenchWords
-    for (let i = frenchWordsCopy.length - 1; i > 0; i--) {
+    for (let i = 0; i < arabicWords.length; i++) {
+        let arabicWord = arabicWords[i].trim();
+        let frenchWord = frenchWords[i].trim();
+        let wordPair = { arabic: arabicWord, french: frenchWord, index: i };
+        wordPairs.push(wordPair);
+    }
+
+    // Shuffle the French words based on their original index position
+    let shuffledFrenchWords = wordPairs.map(wordPair => wordPair.french);
+    for (let i = shuffledFrenchWords.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
-        [frenchWordsCopy[i], frenchWordsCopy[j]] = [frenchWordsCopy[j], frenchWordsCopy[i]];
+        [shuffledFrenchWords[i], shuffledFrenchWords[j]] = [shuffledFrenchWords[j], shuffledFrenchWords[i]];
     }
 
     let arabicTable = document.getElementById("arabic-table");
@@ -28,9 +36,9 @@ function generateTables() {
     arabicTable.innerHTML = "";
     frenchTable.innerHTML = "";
 
-    for (let i = 0; i < arabicWords.length; i++) {
-        let arabicWord = arabicWords[i].trim();
-        let frenchWord = frenchWordsCopy[i].trim(); // Use the shuffled word from the copy
+    for (let i = 0; i < wordPairs.length; i++) {
+        let arabicWord = wordPairs[i].arabic;
+        let frenchWord = shuffledFrenchWords[wordPairs[i].index];
 
         let arabicRow = document.createElement("tr");
         let arabicCell = document.createElement("td");
@@ -51,6 +59,7 @@ function generateTables() {
         frenchTable.appendChild(frenchRow);
     }
 }
+
 
 
 
