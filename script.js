@@ -5,44 +5,54 @@ let arabicWords = [];
 let frenchWords = [];
 
 function generateTables() {
-	arabicWords = document.getElementById("arabic-input").value.split(",");
-	frenchWords = document.getElementById("french-input").value.split(",");
+    arabicWords = document.getElementById("arabic-input").value.split(",");
+    frenchWords = document.getElementById("french-input").value.split(",");
 
-	if (arabicWords.length !== frenchWords.length) {
-		alert("The number of Arabic words must be equal to the number of French words.");
-		return;
-	}
+    if (arabicWords.length !== frenchWords.length) {
+        alert("The number of Arabic words must be equal to the number of French words.");
+        return;
+    }
 
-	let arabicTable = document.getElementById("arabic-table");
-	let frenchTable = document.getElementById("french-table");
+    let frenchWordsCopy = frenchWords.slice(); // Create a copy of frenchWords to shuffle
 
-	// Clear tables
-	arabicTable.innerHTML = "";
-	frenchTable.innerHTML = "";
+    // Shuffle the copy of frenchWords
+    for (let i = frenchWordsCopy.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [frenchWordsCopy[i], frenchWordsCopy[j]] = [frenchWordsCopy[j], frenchWordsCopy[i]];
+    }
 
-	for (let i = 0; i < arabicWords.length; i++) {
-		let arabicWord = arabicWords[i].trim();
-		let frenchWord = frenchWords[i].trim();
+    let arabicTable = document.getElementById("arabic-table");
+    let frenchTable = document.getElementById("french-table");
 
-		let arabicRow = document.createElement("tr");
-		let arabicCell = document.createElement("td");
-		arabicCell.innerHTML = arabicWord;
-		arabicCell.onclick = function() {
-			selectWord(arabicCell);
-		};
-		arabicRow.appendChild(arabicCell);
-		arabicTable.appendChild(arabicRow);
+    // Clear tables
+    arabicTable.innerHTML = "";
+    frenchTable.innerHTML = "";
 
-		let frenchRow = document.createElement("tr");
-		let frenchCell = document.createElement("td");
-		frenchCell.innerHTML = frenchWord;
-		frenchCell.onclick = function() {
-			selectWord(frenchCell);
-		};
-		frenchRow.appendChild(frenchCell);
-		frenchTable.appendChild(frenchRow);
-	}
+    for (let i = 0; i < arabicWords.length; i++) {
+        let arabicWord = arabicWords[i].trim();
+        let frenchWord = frenchWordsCopy[i].trim(); // Use the shuffled word from the copy
+
+        let arabicRow = document.createElement("tr");
+        let arabicCell = document.createElement("td");
+        arabicCell.innerHTML = arabicWord;
+        arabicCell.onclick = function() {
+            selectWord(arabicCell);
+        };
+        arabicRow.appendChild(arabicCell);
+        arabicTable.appendChild(arabicRow);
+
+        let frenchRow = document.createElement("tr");
+        let frenchCell = document.createElement("td");
+        frenchCell.innerHTML = frenchWord;
+        frenchCell.onclick = function() {
+            selectWord(frenchCell);
+        };
+        frenchRow.appendChild(frenchCell);
+        frenchTable.appendChild(frenchRow);
+    }
 }
+
+
 
 function selectWord(cell) {
 	if (selectedWord === null) {
